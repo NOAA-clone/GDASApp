@@ -21,11 +21,11 @@
 namespace gdasapp {
 
   // Main application class
-  class recenter : public oops::Application {
+  class ecen : public oops::Application {
    public:
-    explicit recenter(const eckit::mpi::Comm & comm = oops::mpi::world())
+    explicit ecen(const eckit::mpi::Comm & comm = oops::mpi::world())
       : Application(comm) {}
-    static const std::string classname() {return "gdasapp::recenter";}
+    static const std::string classname() {return "gdasapp::ecen";}
 
     int execute(const eckit::Configuration & fullConfig, bool validate) const {
       // Get analysis parameters
@@ -112,7 +112,7 @@ namespace gdasapp {
 
    private:
     std::string appname() const {
-      return "gdasapp::recenter";
+      return "gdasapp::ecen";
     }
   };
 }  // namespace gdasapp

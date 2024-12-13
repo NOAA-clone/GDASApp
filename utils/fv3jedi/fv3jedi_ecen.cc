@@ -1,8 +1,8 @@
-#include "fv3jedi_recenter.h"
+#include "fv3jedi_ecen.h"
 #include "oops/runs/Run.h"
 
 int main(int argc,  char ** argv) {
   oops::Run run(argc, argv);
-  gdasapp::recenter recenter;
-  return run.execute(recenter);
+  gdasapp::ecen ecen;
+  return run.execute(ecen);
 }
