@@ -36,7 +36,7 @@ namespace gdasapp {
       const util::DateTime windowBegin(windowBeginStr);
       const oops::Variables stateVars(fullConfig, "state variables");
       const oops::Variables incrVars(fullConfig, "increment variables");
-      
+
       // Get geometry configurations
       const eckit::LocalConfiguration bkgGeomConfig(fullConfig, "background geometry");
       const eckit::LocalConfiguration incrGeomConfig(fullConfig, "increment geometry");
@@ -50,7 +50,7 @@ namespace gdasapp {
       const fv3jedi::Geometry bkgGeom(bkgGeomConfig, this->getComm());
       const fv3jedi::Geometry anlEnsMeanGeom(anlEnsMeanGeomConfig, this->getComm());
       const fv3jedi::Geometry incrCorGeom(incrCorGeomConfig, this->getComm());
-      
+
       // Get additions configuration
       int nhrs = fcstHours.size();
       std::vector<eckit::LocalConfiguration> additionsConfig;
@@ -76,10 +76,10 @@ namespace gdasapp {
         const eckit::LocalConfiguration bkgConfig(additionsConfig[ihrs], "background");
         const eckit::LocalConfiguration incrConfig(additionsConfig[ihrs], "increment");
         const eckit::LocalConfiguration anlEnsMeanConfig(additionsConfig[ihrs], \
-                                                         "ensemble mean analysis");        
+                                                         "ensemble mean analysis");
         const eckit::LocalConfiguration incrCorConfig(additionsConfig[ihrs], \
                                                       "correction increment");
-        
+
         // Read background
         fv3jedi::State xxBkg(bkgGeom, stateVars, currentCycle);
         xxBkg.read(bkgConfig);
@@ -91,7 +91,7 @@ namespace gdasapp {
         // Read ensemble mean analysis
         fv3jedi::State xxAnlEnsMean(anlEnsMeanGeom, incrVars, currentCycle);
         xxAnlEnsMean.read(anlEnsMeanConfig);
-        
+
         // Compute deterministic analysis
         fv3jedi::State xxAnlDet(bkgGeom, xxBkg);
         xxAnlDet += dx;
