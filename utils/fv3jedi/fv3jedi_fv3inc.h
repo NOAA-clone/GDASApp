@@ -12,8 +12,11 @@
 #include "fv3jedi/Geometry/Geometry.h"
 #include "fv3jedi/Increment/Increment.h"
 #include "fv3jedi/State/State.h"
+#include "fv3jedi/Utilities/Traits.h"
 #include "fv3jedi/VariableChange/VariableChange.h"
 
+#include "oops/base/StructuredGridPostProcessor.h"
+#include "oops/base/StructuredGridWriter.h"
 #include "oops/mpi/mpi.h"
 #include "oops/runs/Application.h"
 #include "oops/util/ConfigFunctions.h"
@@ -91,7 +94,7 @@ namespace gdasapp {
       const fv3jedi::Geometry stateGeom(stateGeomConfig, this->getComm());
       const fv3jedi::Geometry jediIncrGeom(jediIncrGeomConfig, this->getComm());
       const fv3jedi::Geometry fv3IncrGeom(fv3IncrGeomConfig, this->getComm());
-
+      
       // Setup variable change
       std::unique_ptr<fv3jedi::VariableChange> vc;
       vc.reset(new fv3jedi::VariableChange(varChangeConfig, stateGeom));
@@ -104,9 +107,10 @@ namespace gdasapp {
         // ---------------------------------------------------------------------------------
 
         // Get input configurations
-        eckit::LocalConfiguration stateInputConfig(membersConfig[imem], "background input");
-        eckit::LocalConfiguration jediIncrInputConfig(membersConfig[imem], "jedi increment input");
-        eckit::LocalConfiguration fv3IncrOuputConfig(membersConfig[imem], "fv3 increment output");
+        const eckit::LocalConfiguration stateInputConfig(membersConfig[imem], "background input");
+        const eckit::LocalConfiguration jediIncrInputConfig(membersConfig[imem], "jedi increment input");
+        const eckit::LocalConfiguration fv3IncrOuputConfig(membersConfig[imem], "fv3 increment output");
+        const eckit::LocalConfiguration anlOuputConfig(membersConfig[imem], "analysis to structured grid");        
 
         // Read background state
         fv3jedi::State xxBkg(stateGeom, stateInputConfig);
@@ -176,6 +180,12 @@ namespace gdasapp {
 
         // Write FV3 increment
         dxFV3.write(fv3IncrOuputConfig);
+
+        // Write analysis
+        //        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, xxAnl.geometry());
+        const oops::Geometry<fv3jedi::Traits> foo(stateGeomConfig, this->getComm());
+        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, foo);
+        analysis.interpolateAndWrite(xxAnl);
       }
 
       return 0;
