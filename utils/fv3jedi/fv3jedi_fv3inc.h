@@ -32,7 +32,7 @@ namespace gdasapp {
       : Application(comm) {}
     static const std::string classname() {return "gdasapp::fv3inc";}
 
-    int execute(const eckit::Configuration & fullConfig, bool validate) const {
+    int execute(const eckit::Configuration & fullConfig) const {
       // Configurations
       // ---------------------------------------------------------------------------------
 
