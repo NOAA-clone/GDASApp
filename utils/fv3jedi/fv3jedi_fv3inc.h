@@ -91,13 +91,13 @@ namespace gdasapp {
       // ---------------------------------------------------------------------------------
 
       // Setup geometries
-      const fv3jedi::Geometry stateGeom(stateGeomConfig, this->getComm());
-      const fv3jedi::Geometry jediIncrGeom(jediIncrGeomConfig, this->getComm());
-      const fv3jedi::Geometry fv3IncrGeom(fv3IncrGeomConfig, this->getComm());
+      const oops::Geometry<fv3jedi::Traits> stateGeom(stateGeomConfig, this->getComm());
+      const oops::Geometry<fv3jedi::Traits> jediIncrGeom(jediIncrGeomConfig, this->getComm());
+      const oops::Geometry<fv3jedi::Traits> fv3IncrGeom(fv3IncrGeomConfig, this->getComm());
       
       // Setup variable change
-      std::unique_ptr<fv3jedi::VariableChange> vc;
-      vc.reset(new fv3jedi::VariableChange(varChangeConfig, stateGeom));
+      std::unique_ptr<oops::VariableChange<fv3jedi::Traits>> vc;
+      vc.reset(new oops::VariableChange<fv3jedi::Traits>(varChangeConfig, stateGeom));
 
       // Loop through ensemble member
       // ---------------------------------------------------------------------------------
@@ -113,10 +113,10 @@ namespace gdasapp {
         const eckit::LocalConfiguration anlOuputConfig(membersConfig[imem], "analysis to structured grid");        
 
         // Read background state
-        fv3jedi::State xxBkg(stateGeom, stateInputConfig);
+        oops::State<fv3jedi::Traits> xxBkg(stateGeom, stateInputConfig);
 
         // Read JEDI increment
-        fv3jedi::Increment dxJEDI(jediIncrGeom, jediIncrVars, xxBkg.validTime());
+        oops::Increment<fv3jedi::Traits> dxJEDI(jediIncrGeom, jediIncrVars, xxBkg.validTime());
         dxJEDI.read(jediIncrInputConfig);
 
         // Testing output for inputs
@@ -134,7 +134,7 @@ namespace gdasapp {
         // ---------------------------------------------------------------------------------
 
         // Add JEDI increment to background to get analysis
-        fv3jedi::State xxAnl(stateGeom, xxBkg);
+        oops::State<fv3jedi::Traits> xxAnl(stateGeom, xxBkg);
         xxAnl += dxJEDI;
 
         // Perform variables change on background and analysis
@@ -142,7 +142,7 @@ namespace gdasapp {
         vc->changeVar(xxAnl, varChangeIncrVars);
 
         // Get FV3 increment by subtracting background and analysis after variable change
-        fv3jedi::Increment dxFV3(fv3IncrGeom, fv3IncrVars, xxBkg.validTime());
+        oops::Increment<fv3jedi::Traits> dxFV3(fv3IncrGeom, fv3IncrVars, xxBkg.validTime());
         dxFV3.diff(xxAnl, xxBkg);
 
         // Put JEDI increment fields not created by variable change into FV3 increment
@@ -182,9 +182,9 @@ namespace gdasapp {
         dxFV3.write(fv3IncrOuputConfig);
 
         // Write analysis
-        //        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, xxAnl.geometry());
-        const oops::Geometry<fv3jedi::Traits> foo(stateGeomConfig, this->getComm());
-        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, foo);
+        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, xxAnl.geometry());
+        //        const oops::Geometry<fv3jedi::Traits> foo(stateGeomConfig, this->getComm());
+        //        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, foo);
         analysis.interpolateAndWrite(xxAnl);
       }
 
