@@ -38,7 +38,6 @@ namespace gdasapp {
 
       // Get variable change
       const eckit::LocalConfiguration varChangeConfig(fullConfig, "variable change");
-      oops::Variables bkgVars(varChangeConfig, "input variables");
       oops::Variables varChangeIncrVars(varChangeConfig, "output variables");
 
       // Get increment variables
@@ -183,8 +182,6 @@ namespace gdasapp {
 
         // Write analysis
         const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, xxAnl.geometry());
-        //        const oops::Geometry<fv3jedi::Traits> foo(stateGeomConfig, this->getComm());
-        //        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, foo);
         analysis.interpolateAndWrite(xxAnl);
       }
 
