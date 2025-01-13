@@ -181,7 +181,10 @@ namespace gdasapp {
         dxFV3.write(fv3IncrOuputConfig);
 
         // Write analysis
-        xxAnl.write(anlOuputConfig)
+        if (membersConfig[imem].has("analysis")) {
+          const eckit::LocalConfiguration anlOuputConfig(membersConfig[imem], "analysis");
+          xxAnl.write(anlOuputConfig);
+        }
       }
 
       return 0;
