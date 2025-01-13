@@ -109,7 +109,7 @@ namespace gdasapp {
         const eckit::LocalConfiguration stateInputConfig(membersConfig[imem], "background input");
         const eckit::LocalConfiguration jediIncrInputConfig(membersConfig[imem], "jedi increment input");
         const eckit::LocalConfiguration fv3IncrOuputConfig(membersConfig[imem], "fv3 increment output");
-        const eckit::LocalConfiguration anlOuputConfig(membersConfig[imem], "analysis to structured grid");        
+        const eckit::LocalConfiguration anlOuputConfig(membersConfig[imem], "analysis");
 
         // Read background state
         oops::State<fv3jedi::Traits> xxBkg(stateGeom, stateInputConfig);
@@ -181,8 +181,7 @@ namespace gdasapp {
         dxFV3.write(fv3IncrOuputConfig);
 
         // Write analysis
-        const oops::StructuredGridWriter<fv3jedi::Traits> analysis(anlOuputConfig, xxAnl.geometry());
-        analysis.interpolateAndWrite(xxAnl);
+        xxAnl.write(anlOuputConfig)
       }
 
       return 0;
